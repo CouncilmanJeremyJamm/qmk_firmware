@@ -20,8 +20,7 @@
 #define BASE_COLOUR HSV_CORAL
 
 /* Sets default underglow colour and mode */
-void keyboard_post_init_user(void)
-{
+void keyboard_post_init_user(void) {
     rgblight_enable_noeeprom();
     rgblight_sethsv_noeeprom(BASE_COLOUR);
     rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
@@ -29,8 +28,7 @@ void keyboard_post_init_user(void)
 
 /* Assigns a unique underglow colour to each layer */
 layer_state_t layer_state_set_user(layer_state_t state) {
-    switch (get_highest_layer(state))
-    {
+    switch (get_highest_layer(state)) {
     case 3:
         rgblight_sethsv_noeeprom(HSV_YELLOW);
         break;
@@ -48,17 +46,14 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 }
 
 /* Tapdance */
-enum
-{
+enum {
 	LBRACS,
 	RBRACS,
 	TDRESET
 };
 
-void lbracs_tapdance(qk_tap_dance_state_t *state, void *user_data)
-{
-	switch (state->count)
-	{
+void lbracs_tapdance(qk_tap_dance_state_t *state, void *user_data) {
+	switch (state->count) {
     case 1:
         SEND_STRING("(");
         break;
@@ -71,10 +66,8 @@ void lbracs_tapdance(qk_tap_dance_state_t *state, void *user_data)
     }
 }
 
-void rbracs_tapdance(qk_tap_dance_state_t *state, void *user_data)
-{
-	switch (state->count)
-	{
+void rbracs_tapdance(qk_tap_dance_state_t *state, void *user_data) {
+	switch (state->count) {
     case 1:
         SEND_STRING(")");
         break;
@@ -88,10 +81,8 @@ void rbracs_tapdance(qk_tap_dance_state_t *state, void *user_data)
 }
 
 /* Reset button only activates on a triple tap */
-void tdreset_tapdance(qk_tap_dance_state_t *state, void *user_data)
-{
-	if (state->count == 3)
-	{
+void tdreset_tapdance(qk_tap_dance_state_t *state, void *user_data) {
+	if (state->count == 3) {
 		rgblight_sethsv_noeeprom (HSV_RED); // Red colour indicates bootloader mode
 		reset_keyboard();
 	}
