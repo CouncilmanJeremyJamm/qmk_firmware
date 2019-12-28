@@ -13,12 +13,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+ 
 #include QMK_KEYBOARD_H
 
 #define LT3_TAB LT(3, KC_TAB)
 #define BASE_COLOUR HSV_CORAL
 
-/* Sets default underglow colour */
+/* Sets default underglow colour and mode */
 void keyboard_post_init_user(void)
 {
     rgblight_enable_noeeprom();
@@ -85,11 +86,12 @@ void rbracs_tapdance(qk_tap_dance_state_t *state, void *user_data)
     }
 }
 
+/* Reset button only activates on a triple tap */
 void tdreset_tapdance(qk_tap_dance_state_t *state, void *user_data)
 {
 	if (state->count == 3)
 	{
-		rgblight_sethsv_noeeprom (HSV_RED);
+		rgblight_sethsv_noeeprom (HSV_RED); // Red colour indicates bootloader mode
 		reset_keyboard();
 	}
 }
