@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #include QMK_KEYBOARD_H
 
 #define LT3_TAB LT(3, KC_TAB)
@@ -29,7 +29,8 @@ void keyboard_post_init_user(void)
 
 /* Assigns a unique underglow colour to each layer */
 layer_state_t layer_state_set_user(layer_state_t state) {
-    switch (get_highest_layer(state)) {
+    switch (get_highest_layer(state))
+    {
     case 3:
         rgblight_sethsv_noeeprom(HSV_YELLOW);
         break;

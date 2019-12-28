@@ -21,9 +21,11 @@
 // place overrides here
 #define TAPPING_TERM 175
 
+/* Only enable used RGB animations */
 #undef RGBLIGHT_ANIMATIONS
 #define RGBLIGHT_SLEEP
 
+/* Reduces file size */
 #define NO_ACTION_ONESHOT
 #define NO_ACTION_MACRO
 #define NO_ACTION_FUNCTION
