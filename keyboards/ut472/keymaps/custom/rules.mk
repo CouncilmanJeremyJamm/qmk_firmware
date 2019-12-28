@@ -1,3 +1,4 @@
 TAP_DANCE_ENABLE = yes
 API_SYSEX_ENABLE = no
+
 EXTRAFLAGS += -flto
