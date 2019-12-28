@@ -20,6 +20,8 @@
 
 // place overrides here
 #define TAPPING_TERM 175
+#undef DEBOUNCE
+#define DEBOUNCE 0
 
 /* Only enable used RGB animations */
 #undef RGBLIGHT_ANIMATIONS
