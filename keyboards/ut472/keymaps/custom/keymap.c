@@ -27,11 +27,12 @@ enum layers {
     _MED,
 };
 
-/* Sets default underglow colour and mode */
+/* Sets the default underglow colour on boot */
 void keyboard_post_init_user(void) {
-    rgblight_enable_noeeprom();
-    rgblight_sethsv_noeeprom(BASE_COLOUR);
-    rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
+  rgblight_enable_noeeprom();
+  rgblight_sethsv_noeeprom(BASE_COLOUR);
+  wait_ms(20); //This delay is ESSENTIAL, not sure why.
+  rgblight_mode_noeeprom(1);
 }
 
 /* Assigns a unique underglow colour to each layer */
@@ -46,11 +47,11 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     case _NUMS:
         rgblight_sethsv_noeeprom(HSV_TEAL);
         break;
-    default: //_BASE
+    default:
         rgblight_sethsv_noeeprom(BASE_COLOUR);
         break;
     }
-	return state;
+  	return state;
 }
 
 /* Tapdance */
@@ -63,13 +64,13 @@ enum tapdances {
 void lbracs_tapdance(qk_tap_dance_state_t *state, void *user_data) {
 	switch (state->count) {
     case 1:
-        SEND_STRING("(");
+        SEND_STRING ("(");
         break;
     case 2:
-        SEND_STRING("[");
+        SEND_STRING ("[");
         break;
     case 3:
-        SEND_STRING("{");
+        SEND_STRING ("{");
         break;
     }
 }
@@ -77,13 +78,13 @@ void lbracs_tapdance(qk_tap_dance_state_t *state, void *user_data) {
 void rbracs_tapdance(qk_tap_dance_state_t *state, void *user_data) {
 	switch (state->count) {
     case 1:
-        SEND_STRING(")");
+        SEND_STRING (")");
         break;
     case 2:
-        SEND_STRING("]");
+        SEND_STRING ("]");
         break;
     case 3:
-		SEND_STRING("}");
+		    SEND_STRING ("}");
         break;
     }
 }
