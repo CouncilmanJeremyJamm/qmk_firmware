@@ -18,8 +18,10 @@
 
 #include "config_common.h"
 
-// place overrides here
+/* Require faster taps in tapdance */
 #define TAPPING_TERM 175
+
+/* Disables debouncing */
 #undef DEBOUNCE
 #define DEBOUNCE 0
 
