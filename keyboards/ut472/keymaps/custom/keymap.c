@@ -66,7 +66,7 @@ enum tapdances {
 #define TD_RSET TD(BTLDR)
 
 void lbracs_tapdance(qk_tap_dance_state_t *state, void *user_data) {
-	switch (state->count) {
+	  switch (state->count) {
     case 1:
         SEND_STRING ("(");
         break;
