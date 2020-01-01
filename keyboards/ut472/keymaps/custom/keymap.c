@@ -29,10 +29,10 @@ enum layers {
 
 /* Sets the default underglow colour on boot */
 void keyboard_post_init_user(void) {
-  rgblight_enable_noeeprom();
-  rgblight_sethsv_noeeprom(BASE_COLOUR);
-  wait_ms(20); //This delay is ESSENTIAL, not sure why.
-  rgblight_mode_noeeprom(1);
+    rgblight_enable_noeeprom();
+    rgblight_sethsv_noeeprom(BASE_COLOUR);
+    wait_ms(20); //This delay is ESSENTIAL, not sure why.
+    rgblight_mode_noeeprom(1);
 }
 
 /* Assigns a unique underglow colour to each layer */
@@ -61,6 +61,7 @@ enum tapdances {
     BTLDR
 };
 
+/* Shortened tapdance keycodes */
 #define TD_LBR  TD(LBRACS)
 #define TD_RBR  TD(RBRACS)
 #define TD_RSET TD(BTLDR)
@@ -117,7 +118,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |-------------------------------------------------------------------------+
  * | Shift |  Z  |  X  |  C  |  V  |  B  |  N  |  M  |  ,  |  .  |  /  |Sh/En|
  * |-------------------------------------------------------------------------+
- * | Ctrl| Gui | Alt | App |  L1 |   Space   |  L2  | Left| Down|  Up  |Right|
+ * | Ctrl| Gui | Alt | App |  L1 |   Space    |  L2  | Left| Down|  Up |Right|
  * `-------------------------------------------------------------------------'
  */
 
@@ -136,7 +137,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |-------------------------------------------------------------------------+
  * |       |  _  |  X  |     |     |     |     |  1  |  2  |  3  |     |     |
  * |-------------------------------------------------------------------------+
- * |     |     |     |     |      |          |       |     |     |     |     |
+ * |     |     |     |     |     |            |      |     |     |     |     |
  * `-------------------------------------------------------------------------'
  */
 
@@ -149,13 +150,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 /* FN Layer 2: symbols and brackets
  * ,-------------------------------------------------------------------------.
- * |   ~  |  !  |  "  |  @  |  $  |  %  |  ^  |  &  |  *  |  -  |  =  |Delete|
+ * |  ~  |  !  |  "  |  @  |  $  |  %  |  ^  |  &  |  *  |  -  |  =  | Delete|
  * |-------------------------------------------------------------------------+
- * |      | ([{ |     | )]} |     |     |     |     |  _  |  +  |      |  |  |
+ * |      | ([{ |     | )]} |     |     |     |     |  _  |  +  |     |   |  |
  * |-------------------------------------------------------------------------+
  * |       |     |     |     |     |     |     |     |     |     |     |     |
  * |-------------------------------------------------------------------------+
- * |     |     |     |     |      |          |       |     |     |     |     |
+ * |     |     |     |     |     |            |      |     |     |     |     |
  * `-------------------------------------------------------------------------'
  */
 
@@ -174,7 +175,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |-------------------------------------------------------------------------+
  * |       |     |     |     |     |RESET|     |     |     |     |     |     |
  * |-------------------------------------------------------------------------+
- * |     |     |     |     |      |          |       | Home| PgDn| PgUp| End |
+ * |     |     |     |     |     |            |      | Home| PgDn| PgUp| End |
  * `-------------------------------------------------------------------------'
  */
 
