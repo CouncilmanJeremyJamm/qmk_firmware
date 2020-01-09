@@ -16,7 +16,7 @@
 
 #include QMK_KEYBOARD_H
 
-#define LT3_TAB LT(3, KC_TAB)
+#define LT3_TAB     LT(3, KC_TAB)
 #define BASE_COLOUR HSV_CORAL
 
 /* Names layers in sequential order */
@@ -37,7 +37,7 @@ void keyboard_post_init_user(void) {
 
 /* Assigns a unique underglow colour to each layer */
 layer_state_t layer_state_set_user(layer_state_t state) {
-    switch (get_highest_layer(state)) {
+    switch(get_highest_layer(state)) {
     case _MED:
         rgblight_sethsv_noeeprom(HSV_YELLOW);
         break;
@@ -67,45 +67,45 @@ enum tapdances {
 #define TD_RSET TD(BTLDR)
 
 void lbracs_tapdance(qk_tap_dance_state_t *state, void *user_data) {
-	  switch (state->count) {
+	  switch(state->count) {
     case 1:
-        SEND_STRING ("(");
+        SEND_STRING("(");
         break;
     case 2:
-        SEND_STRING ("[");
+        SEND_STRING("[");
         break;
     case 3:
-        SEND_STRING ("{");
+        SEND_STRING("{");
         break;
     }
 }
 
 void rbracs_tapdance(qk_tap_dance_state_t *state, void *user_data) {
-	switch (state->count) {
+    switch(state->count) {
     case 1:
-        SEND_STRING (")");
+        SEND_STRING(")");
         break;
     case 2:
-        SEND_STRING ("]");
+        SEND_STRING("]");
         break;
     case 3:
-		    SEND_STRING ("}");
+		    SEND_STRING("}");
         break;
     }
 }
 
 /* Reset button only activates on a triple tap */
 void tdreset_tapdance(qk_tap_dance_state_t *state, void *user_data) {
-    if (state->count == 3) {
+    if(state->count == 3) {
 		    rgblight_sethsv_noeeprom (HSV_RED); // Red colour indicates bootloader mode
 		    reset_keyboard();
 	  }
 }
 
 qk_tap_dance_action_t tap_dance_actions[] = {
-    [LBRACS] = ACTION_TAP_DANCE_FN (lbracs_tapdance),
-    [RBRACS] = ACTION_TAP_DANCE_FN (rbracs_tapdance),
-    [BTLDR] = ACTION_TAP_DANCE_FN (tdreset_tapdance)
+    [LBRACS] = ACTION_TAP_DANCE_FN(lbracs_tapdance),
+    [RBRACS] = ACTION_TAP_DANCE_FN(rbracs_tapdance),
+    [BTLDR]  = ACTION_TAP_DANCE_FN(tdreset_tapdance)
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
