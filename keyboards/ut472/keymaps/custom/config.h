@@ -14,24 +14,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#pragma   once
 
 #include "config_common.h"
 
 /* Require faster taps in tapdance */
-#define TAPPING_TERM 175
+#define  TAPPING_TERM 175
 
 /* Disables debouncing */
-#undef DEBOUNCE
-#define DEBOUNCE 0
+#undef   DEBOUNCE
+#define  DEBOUNCE 0
 
 /* Only enable used RGB animations */
-#undef RGBLIGHT_ANIMATIONS
-#define RGBLIGHT_SLEEP
+#undef   RGBLIGHT_ANIMATIONS
+#define  RGBLIGHT_SLEEP
 
 /* Reduces file size */
-#define NO_ACTION_ONESHOT
-#define NO_ACTION_MACRO
-#define NO_ACTION_FUNCTION
-#define IGNORE_MOD_TAP_INTERRUPT
-#define TAPPING_FORCE_HOLD
+#define  NO_ACTION_ONESHOT
+#define  NO_ACTION_MACRO
+#define  NO_ACTION_FUNCTION
+#define  IGNORE_MOD_TAP_INTERRUPT
+#define  TAPPING_FORCE_HOLD
