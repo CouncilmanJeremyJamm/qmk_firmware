@@ -15,8 +15,9 @@
  */
 
 #pragma   once
-
 #include "config_common.h"
+
+#define  UNICODE_KEY_WINC KC_RALT
 
 /* Require faster taps in tapdance */
 #define  TAPPING_TERM 175
@@ -30,8 +31,8 @@
 #define  RGBLIGHT_SLEEP
 
 /* Reduces file size */
-#define  NO_ACTION_ONESHOT
-#define  NO_ACTION_MACRO
-#define  NO_ACTION_FUNCTION
-#define  IGNORE_MOD_TAP_INTERRUPT
-#define  TAPPING_FORCE_HOLD
+//#define  NO_ACTION_ONESHOT
+//#define  NO_ACTION_MACRO
+//#define  NO_ACTION_FUNCTION
+//#define  IGNORE_MOD_TAP_INTERRUPT
+//#define  TAPPING_FORCE_HOLD

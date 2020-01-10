@@ -19,13 +19,9 @@
 #define LT3_TAB     LT(3, KC_TAB)
 #define BASE_COLOUR HSV_CORAL
 
-/* Names layers in sequential order */
-enum layers {
-    _BASE,
-    _NUMS,
-    _SYMB,
-    _MED,
-};
+void eeconfig_init_user(void) {
+    set_unicode_input_mode(UC_WINC);
+}
 
 /* Sets the default underglow colour on boot */
 void keyboard_post_init_user(void) {
@@ -34,6 +30,15 @@ void keyboard_post_init_user(void) {
     wait_ms(20); //This delay is ESSENTIAL, not sure why.
     rgblight_mode_noeeprom(1);
 }
+
+/* Names layers in sequential order */
+enum layers {
+    _BASE,
+    _NUMS,
+    _SYMB,
+    _MED,
+    _UNIC
+};
 
 /* Assigns a unique underglow colour to each layer */
 layer_state_t layer_state_set_user(layer_state_t state) {
@@ -47,12 +52,55 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     case _NUMS:
         rgblight_sethsv_noeeprom(HSV_TEAL);
         break;
+    case _UNIC:
+        rgblight_sethsv_noeeprom(HSV_SPRINGGREEN);
+        break;
     default:
         rgblight_sethsv_noeeprom(BASE_COLOUR);
         break;
     }
   	return state;
 }
+
+enum my_keycodes {
+    KC_UNIC = SAFE_RANGE,
+};
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch(keycode) {
+    case KC_UNIC:
+        if (record->event.pressed) {
+            layer_on(_UNIC);
+            tap_code(KC_RALT);
+            tap_code(KC_ENT);
+        } else {
+            layer_off(_UNIC);
+        }
+        return false; // Skip all further processing of this key
+    default:
+        return true; // Process all other keycodes normally
+    }
+}
+
+enum unicode_names {
+    ALPH, //α
+    BETA, //β
+    GAMM, //γ
+    THET, //θ
+    MU,   //μ
+    PI,   //π
+    RHO   //ρ
+};
+
+const uint32_t PROGMEM unicode_map[] = {
+    [ALPH] = 0x03B1,
+    [BETA] = 0x03B2,
+    [GAMM] = 0x03B3,
+    [THET] = 0x03B8,
+    [MU]   = 0x03BC,
+    [PI]   = 0x03C0,
+    [RHO]  = 0x03C1,
+};
 
 /* Tapdance */
 enum tapdances {
@@ -126,7 +174,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       KC_ESC,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSPC,
       LT3_TAB, KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_QUOT, KC_SCLN,
       KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_SFTENT,
-      KC_LCTL, KC_LGUI, KC_LALT, KC_MPLY, MO(1),       KC_SPC,       MO(2),   KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT
+      KC_LCTL, KC_LGUI, KC_LALT, KC_UNIC, MO(1),       KC_SPC,       MO(2),   KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT
     ),
 
 /* FN Layer 1: hexadecimal and numpad
@@ -184,5 +232,24 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       _______, RGB_TOG, _______, _______, _______, _______, _______, KC_MPRV, KC_MPLY, KC_MNXT, _______, _______,
       _______, _______, _______, _______, _______, TD_RSET, _______, _______, _______, _______, _______, _______,
       _______, _______, _______, _______, _______,     _______,      _______, KC_HOME, KC_PGDN, KC_PGUP, KC_END
+    ),
+
+/* FN Layer 4: Greek/physics symbols
+ * ,-------------------------------------------------------------------------.
+ * |     |     |     |     |  ρ  |  θ  |     |     |     |     |  π  |       |
+ * |-------------------------------------------------------------------------+
+ * |      |  α  |     |     |     |  γ  |     |     |     |     |     |      |
+ * |-------------------------------------------------------------------------+
+ * |       |     |     |     |     |  β  |     |  μ  |     |     |     |     |
+ * |-------------------------------------------------------------------------+
+ * |     |     |     |     |     |            |      |     |     |     |     |
+ * `-------------------------------------------------------------------------'
+ */
+
+    [_UNIC] = LAYOUT( /* Tab */
+      _______, _______, _______, _______, X(RHO),  X(THET), _______, _______, _______, _______, X(PI),   _______,
+      _______, X(ALPH), _______, _______, _______, X(GAMM), _______, _______, _______, _______, _______, _______,
+      _______, _______, _______, _______, _______, X(BETA), _______, X(MU),   _______, _______, _______, _______,
+      _______, _______, _______, _______, _______,     _______,      _______, _______, _______, _______, _______
     ),
 };
