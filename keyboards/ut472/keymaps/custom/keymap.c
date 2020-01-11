@@ -62,7 +62,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
   	return state;
 }
 
-enum my_keycodes {
+enum keycodes {
     KC_UNIC = SAFE_RANGE,
 };
 
@@ -70,11 +70,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch(keycode) {
     case KC_UNIC:
         if (record->event.pressed) {
-            layer_on(_UNIC);
-            tap_code(KC_RALT);
-            tap_code(KC_ENT);
-        } else {
-            layer_off(_UNIC);
+            if((layer_state >> _UNIC) & 1) {
+                layer_off(_UNIC);
+            } else {
+                layer_on(_UNIC);
+                tap_code(KC_RALT);
+                tap_code(KC_ENT);
+            }
         }
         return false; // Skip all further processing of this key
     default:
@@ -82,7 +84,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
 }
 
-enum unicode_names {
+enum unicode_chars {
     ALPH, //α
     BETA, //β
     GAMM, //γ
