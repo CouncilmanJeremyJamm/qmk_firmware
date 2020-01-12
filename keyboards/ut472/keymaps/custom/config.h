@@ -17,7 +17,11 @@
 #pragma   once
 #include "config_common.h"
 
+/* Sets WinCompose activation key */
 #define  UNICODE_KEY_WINC KC_RALT
+
+/* Set USB polling rate to 1000Hz */
+#define  USB_POLLING_INTERVAL_MS 1
 
 /* Require faster taps in tapdance */
 #define  TAPPING_TERM 175
@@ -31,8 +35,8 @@
 #define  RGBLIGHT_SLEEP
 
 /* Reduces file size */
-//#define  NO_ACTION_ONESHOT
-//#define  NO_ACTION_MACRO
-//#define  NO_ACTION_FUNCTION
-//#define  IGNORE_MOD_TAP_INTERRUPT
-//#define  TAPPING_FORCE_HOLD
+#define  NO_ACTION_ONESHOT
+#define  NO_ACTION_MACRO
+#define  NO_ACTION_FUNCTION
+#define  IGNORE_MOD_TAP_INTERRUPT
+#define  TAPPING_FORCE_HOLD
