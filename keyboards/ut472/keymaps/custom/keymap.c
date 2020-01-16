@@ -19,10 +19,6 @@
 #define LT3_TAB     LT(3, KC_TAB)
 #define BASE_COLOUR HSV_CORAL
 
-void eeconfig_init_user(void) {
-    set_unicode_input_mode(UC_WINC);
-}
-
 /* Sets the default underglow colour on boot */
 void keyboard_post_init_user(void) {
     rgblight_enable_noeeprom();
@@ -62,34 +58,17 @@ layer_state_t layer_state_set_user(layer_state_t state) {
   	return state;
 }
 
+/* Custom unicode implementation */
 enum keycodes {
     KC_UNIC = SAFE_RANGE,
+    UNICODE_SAFE_RANGE //Must be last
 };
 
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    switch(keycode) {
-    case KC_UNIC:
-        if (record->event.pressed) {
-            if((layer_state >> _UNIC) & 1) {
-                layer_off(_UNIC);
-            } else {
-                layer_on(_UNIC);
-                tap_code(KC_RALT);
-                tap_code(KC_ENT);
-            }
-        }
-        return false; // Skip all further processing of this key
-    default:
-        return true; // Process all other keycodes normally
-    }
-}
-
-enum unicode_chars {
-    DELT, //Δ
-    OMEG, //Ω
+enum unicode_index {
     ALPH, //α
     BETA, //β
     GAMM, //γ
+    DELT, //δ
     EPSI, //ε
     THET, //θ
     LAMB, //λ
@@ -97,15 +76,16 @@ enum unicode_chars {
     MU,   //μ
     PI,   //π
     RHO,  //ρ
-    SIGM  //σ
+    SIGM, //σ
+    OMEG, //ω
+    CHARS_END //Length of enum, do not remove
 };
 
-const uint32_t PROGMEM unicode_map[] = {
-    [DELT] = 0x0394,
-    [OMEG] = 0x03A9,
+const uint16_t PROGMEM unicode_chars[] = {
     [ALPH] = 0x03B1,
     [BETA] = 0x03B2,
     [GAMM] = 0x03B3,
+    [DELT] = 0x03B4,
     [EPSI] = 0x03B5,
     [THET] = 0x03B8,
     [LAMB] = 0x03BB,
@@ -113,8 +93,71 @@ const uint32_t PROGMEM unicode_map[] = {
     [MU]   = 0x03BC,
     [PI]   = 0x03C0,
     [RHO]  = 0x03C1,
-    [SIGM] = 0x03C3
+    [SIGM] = 0x03C3,
+    [OMEG] = 0x03C9
 };
+
+#define Y(index) (UNICODE_SAFE_RANGE + index)
+
+uint16_t hex_to_kc(uint8_t digit) {
+    if (digit == 0x0) {
+        return KC_0;
+    } else if (digit < 0xA) {
+        return KC_1 + (digit - 0x1);
+    } else {
+        return KC_A + (digit - 0xA);
+    }
+}
+
+void tap_hex(uint16_t hex) {
+    uint8_t mods = get_mods();
+    clear_mods();
+    for (int i = 3; i >= 0; i--) {
+        tap_code(hex_to_kc((hex >> (i * 4)) & 0xF));
+    }
+    set_mods(mods);
+}
+
+bool custom_unicode(uint16_t keycode, keyrecord_t *record) {
+    if ((keycode >= UNICODE_SAFE_RANGE) && (keycode < (UNICODE_SAFE_RANGE + CHARS_END))) {
+        if (record->event.pressed) {
+            uint16_t code = pgm_read_dword(unicode_chars + (keycode - UNICODE_SAFE_RANGE));
+            if ((get_mods() & MOD_MASK_SHIFT) ^ IS_HOST_LED_ON(USB_LED_CAPS_LOCK)) {
+                if ((0x03B1 <= code ) && (code <= 0x03C9)) {}
+                    code -= 0x0020;
+            }
+            tap_code(UNICODE_KEY_WINC);
+            tap_code(KC_U);
+            tap_hex(code);
+            tap_code(KC_ENTER);
+        }
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (custom_unicode(keycode, record)) {
+        return false;
+    } else {
+        switch(keycode) {
+        case KC_UNIC:
+            if (record->event.pressed) {
+                if((layer_state >> _UNIC) & 1) {
+                    layer_off(_UNIC);
+                } else {
+                    layer_on(_UNIC);
+                    tap_code(KC_RALT);
+                    tap_code(KC_ENT);
+                }
+            }
+            return false; // Skip all further processing of this key
+        default:
+            return true; // Process all other keycodes normally
+        }
+    }
+}
 
 /* Tapdance */
 enum tapdances {
@@ -250,9 +293,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 /* FN Layer 4: Greek/physics symbols
  * ,-------------------------------------------------------------------------.
- * |     |     |     |  ε  |  ρ  |  θ  |     |     |     |  Ω  |  π  |       |
+ * |     |     |     |  ε  |  ρ  |  θ  |     |     |     |  ω  |  π  |       |
  * |-------------------------------------------------------------------------+
- * |      |  α  |  σ  |  Δ  |     |  γ  |     |     |     |     |  λ  |      |
+ * |      |  α  |  σ  |  δ  |     |  γ  |     |     |     |     |  λ  |      |
  * |-------------------------------------------------------------------------+
  * |       |     |     |     |     |  β  |  ν  |  μ  |     |     |     |     |
  * |-------------------------------------------------------------------------+
@@ -261,9 +304,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
 
     [_UNIC] = LAYOUT( /* Tab */
-      _______, _______, _______, X(EPSI), X(RHO),  X(THET), _______, _______, _______, X(OMEG), X(PI),   _______,
-      _______, X(ALPH), X(SIGM), X(DELT), _______, X(GAMM), _______, _______, _______, X(LAMB), _______, _______,
-      _______, _______, _______, _______, _______, X(BETA), X(NU),   X(MU),   _______, _______, _______, _______,
+      _______, _______, _______, Y(EPSI), Y(RHO),  Y(THET), _______, _______, _______, Y(OMEG), Y(PI),   _______,
+      _______, Y(ALPH), Y(SIGM), Y(DELT), _______, Y(GAMM), _______, _______, _______, Y(LAMB), _______, _______,
+      _______, _______, _______, _______, _______, Y(BETA), Y(NU),   Y(MU),   _______, _______, _______, _______,
       _______, _______, _______, _______, _______,     _______,      _______, _______, _______, _______, _______
     ),
 };
