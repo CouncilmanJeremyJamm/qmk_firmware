@@ -19,6 +19,8 @@
 #define LT3_TAB     LT(3, KC_TAB)
 #define BASE_COLOUR HSV_CORAL
 
+/* ---------- UNDERGLOW ---------- */
+
 /* Sets the default underglow colour on boot */
 void keyboard_post_init_user(void) {
     rgblight_enable_noeeprom();
@@ -58,11 +60,15 @@ layer_state_t layer_state_set_user(layer_state_t state) {
   	return state;
 }
 
-/* Custom unicode implementation */
+/* ---------- UNICODE ---------- */
+
 enum keycodes {
     KC_UNIC = SAFE_RANGE,
-    UNICODE_SAFE_RANGE //Must be last
+    UNICODE_RANGE //Must be last
 };
+
+#define Y(i) (UNICODE_RANGE + i) //Unicode chars are stored by index (above UNICODE_RANGE)
+#define char_pair(c, o) (((c##UL + o) << 0x10) + c) //Concat code + offset code
 
 enum unicode_index {
     ALPH, //α
@@ -72,8 +78,8 @@ enum unicode_index {
     EPSI, //ε
     THET, //θ
     LAMB, //λ
-    NU,   //ν
     MU,   //μ
+    NU,   //ν
     PI,   //π
     RHO,  //ρ
     SIGM, //σ
@@ -81,24 +87,23 @@ enum unicode_index {
     CHARS_END //Length of enum, do not remove
 };
 
-const uint16_t PROGMEM unicode_chars[] = {
-    [ALPH] = 0x03B1,
-    [BETA] = 0x03B2,
-    [GAMM] = 0x03B3,
-    [DELT] = 0x03B4,
-    [EPSI] = 0x03B5,
-    [THET] = 0x03B8,
-    [LAMB] = 0x03BB,
-    [NU]   = 0x03BD,
-    [MU]   = 0x03BC,
-    [PI]   = 0x03C0,
-    [RHO]  = 0x03C1,
-    [SIGM] = 0x03C3,
-    [OMEG] = 0x03C9
+const uint32_t PROGMEM unicode_chars[] = {
+    [ALPH] = char_pair(0x03B1,-0x20),
+    [BETA] = char_pair(0x03B2,-0x20),
+    [GAMM] = char_pair(0x03B3,-0x20),
+    [DELT] = char_pair(0x03B4,-0x20),
+    [EPSI] = char_pair(0x03B5,-0x20),
+    [THET] = char_pair(0x03B8,-0x20),
+    [LAMB] = char_pair(0x03BB,-0x20),
+    [MU]   = char_pair(0x03BC,-0x20),
+    [NU]   = char_pair(0x03BD,-0x20),
+    [PI]   = char_pair(0x03C0,-0x20),
+    [RHO]  = char_pair(0x03C1,-0x20),
+    [SIGM] = char_pair(0x03C3,-0x20),
+    [OMEG] = char_pair(0x03C9,-0x20)
 };
 
-#define Y(index) (UNICODE_SAFE_RANGE + index)
-
+/* Converts each hex digit to the literal character, e.g. A -> 'A' */
 uint16_t hex_to_kc(uint8_t digit) {
     if (digit == 0x0) {
         return KC_0;
@@ -109,6 +114,7 @@ uint16_t hex_to_kc(uint8_t digit) {
     }
 }
 
+/* Taps hex code as it is read */
 void tap_hex(uint16_t hex) {
     uint8_t mods = get_mods();
     clear_mods();
@@ -118,28 +124,25 @@ void tap_hex(uint16_t hex) {
     set_mods(mods);
 }
 
+/* Processing of unicode charaacters */
 bool custom_unicode(uint16_t keycode, keyrecord_t *record) {
-    if ((keycode >= UNICODE_SAFE_RANGE) && (keycode < (UNICODE_SAFE_RANGE + CHARS_END))) {
+    if ((keycode >= UNICODE_RANGE) && (keycode < (UNICODE_RANGE + CHARS_END))) {
         if (record->event.pressed) {
-            uint16_t code = pgm_read_dword(unicode_chars + (keycode - UNICODE_SAFE_RANGE));
-            if ((get_mods() & MOD_MASK_SHIFT) ^ IS_HOST_LED_ON(USB_LED_CAPS_LOCK)) {
-                if ((0x03B1 <= code ) && (code <= 0x03C9)) {}
-                    code -= 0x0020;
-            }
+            uint32_t code = pgm_read_dword(unicode_chars + (keycode - UNICODE_RANGE));
             tap_code(UNICODE_KEY_WINC);
             tap_code(KC_U);
-            tap_hex(code);
+            tap_hex(((get_mods() & MOD_MASK_SHIFT) ? code >> 0x10 : code) & 0xFFFF);
             tap_code(KC_ENTER);
         }
-        return true;
+        return true; //Identifies key as unicode
     } else {
-        return false;
+        return false; //Identifies key as standard
     }
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (custom_unicode(keycode, record)) {
-        return false;
+        return false; //Skip further processing of unicode keys
     } else {
         switch(keycode) {
         case KC_UNIC:
@@ -152,14 +155,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     tap_code(KC_ENT);
                 }
             }
-            return false; // Skip all further processing of this key
+            return false;
         default:
             return true; // Process all other keycodes normally
         }
     }
 }
 
-/* Tapdance */
+/* ---------- Tapdance ---------- */
 enum tapdances {
     LBRACS,
     RBRACS,
