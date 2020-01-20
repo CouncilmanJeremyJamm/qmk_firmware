@@ -23,6 +23,9 @@
 /* Set USB polling rate to 1000Hz */
 #define  USB_POLLING_INTERVAL_MS 1
 
+/* Forces N-key rollover on */
+#define  FORCE_NKRO
+
 /* Require faster taps in tapdance */
 #define  TAPPING_TERM 175
 

@@ -125,7 +125,7 @@ void tap_hex(uint16_t hex) {
 }
 
 /* Processing of unicode charaacters */
-bool custom_unicode(uint16_t keycode, keyrecord_t *record) {
+bool process_record_unicode(uint16_t keycode, keyrecord_t *record) {
     if ((keycode >= UNICODE_RANGE) && (keycode < (UNICODE_RANGE + CHARS_END))) {
         if (record->event.pressed) {
             uint32_t code = pgm_read_dword(unicode_chars + (keycode - UNICODE_RANGE));
@@ -134,30 +134,37 @@ bool custom_unicode(uint16_t keycode, keyrecord_t *record) {
             tap_hex(((get_mods() & MOD_MASK_SHIFT) ? code >> 0x10 : code) & 0xFFFF);
             tap_code(KC_ENTER);
         }
-        return true; //Identifies key as unicode
+        return false; // Prevent further processing of unicode keycodes
     } else {
-        return false; //Identifies key as standard
+        return true; // Other keycodes are processed normally
     }
 }
 
+bool layer_key_pressed = false;
+uint16_t layer_key_timer;
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    if (custom_unicode(keycode, record)) {
-        return false; //Skip further processing of unicode keys
-    } else {
-        switch(keycode) {
-        case KC_UNIC:
-            if (record->event.pressed) {
-                if((layer_state >> _UNIC) & 1) {
-                    layer_off(_UNIC);
-                } else {
-                    layer_on(_UNIC);
-                    tap_code(KC_RALT);
-                    tap_code(KC_ENT);
-                }
-            }
-            return false;
-        default:
-            return true; // Process all other keycodes normally
+    switch(keycode) { // Functionality for custom keycodes
+    case KC_UNIC:
+        if (record->event.pressed) {
+            layer_key_pressed = true;
+            layer_key_timer = timer_read();
+        } else {
+            layer_key_pressed = false;
+            layer_off(_UNIC);
+        }
+        return false;
+    default:
+        return process_record_unicode(keycode, record); // Pass other keycodes to the unicode handler
+    }
+}
+
+void matrix_scan_user(void) {
+    if (layer_key_pressed) {
+        if (timer_elapsed(layer_key_timer) >= 800) {
+            layer_on(_UNIC);
+            tap_code(KC_RALT);
+            tap_code(KC_ENT);
         }
     }
 }
@@ -175,7 +182,7 @@ enum tapdances {
 #define TD_RSET TD(BTLDR)
 
 void lbracs_tapdance(qk_tap_dance_state_t *state, void *user_data) {
-	  switch(state->count) {
+	switch(state->count) {
     case 1:
         SEND_STRING("(");
         break;
@@ -197,7 +204,7 @@ void rbracs_tapdance(qk_tap_dance_state_t *state, void *user_data) {
         SEND_STRING("]");
         break;
     case 3:
-		    SEND_STRING("}");
+		SEND_STRING("}");
         break;
     }
 }
@@ -205,9 +212,9 @@ void rbracs_tapdance(qk_tap_dance_state_t *state, void *user_data) {
 /* Reset button only activates on a triple tap */
 void tdreset_tapdance(qk_tap_dance_state_t *state, void *user_data) {
     if(state->count == 3) {
-		    rgblight_sethsv_noeeprom (HSV_RED); // Red colour indicates bootloader mode
-		    reset_keyboard();
-	  }
+	    rgblight_sethsv_noeeprom (HSV_RED); // Red colour indicates bootloader mode
+	    reset_keyboard();
+	}
 }
 
 qk_tap_dance_action_t tap_dance_actions[] = {
