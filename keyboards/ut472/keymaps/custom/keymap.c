@@ -147,11 +147,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch(keycode) { // Functionality for custom keycodes
     case KC_UNIC:
         if (record->event.pressed) {
-            layer_key_pressed = true;
-            layer_key_timer = timer_read();
+            if (layer_state & (1UL << _UNIC)) {
+                layer_off(_UNIC);
+            } else {
+                layer_key_pressed = true;
+                layer_key_timer = timer_read();
+            }
         } else {
             layer_key_pressed = false;
-            layer_off(_UNIC);
         }
         return false;
     default:
@@ -317,6 +320,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       _______, _______, _______, Y(EPSI), Y(RHO),  Y(THET), _______, _______, _______, Y(OMEG), Y(PI),   _______,
       _______, Y(ALPH), Y(SIGM), Y(DELT), _______, Y(GAMM), _______, _______, _______, Y(LAMB), _______, _______,
       _______, _______, _______, _______, _______, Y(BETA), Y(NU),   Y(MU),   _______, _______, _______, _______,
-      _______, _______, _______, _______, _______,     _______,      _______, _______, _______, _______, _______
+      _______, KC_UNIC, _______, _______, _______,     _______,      _______, _______, _______, _______, _______
     ),
 };
