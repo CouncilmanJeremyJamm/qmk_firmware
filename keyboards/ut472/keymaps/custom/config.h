@@ -27,7 +27,10 @@
 #define  FORCE_NKRO
 
 /* Require faster taps in tapdance */
-#define  TAPPING_TERM 175
+#define  TAPPING_TERM 180
+
+/* TT() toggles layer after 3 taps */
+#define  TAPPING_TOGGLE 3
 
 /* Disables debouncing */
 #undef   DEBOUNCE
@@ -38,8 +41,10 @@
 #define  RGBLIGHT_SLEEP
 
 /* Reduces file size */
+/*
 #define  NO_ACTION_ONESHOT
 #define  NO_ACTION_MACRO
 #define  NO_ACTION_FUNCTION
 #define  IGNORE_MOD_TAP_INTERRUPT
 #define  TAPPING_FORCE_HOLD
+*/
