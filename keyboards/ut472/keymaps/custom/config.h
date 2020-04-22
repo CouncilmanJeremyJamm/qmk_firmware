@@ -32,9 +32,9 @@
 /* TT() toggles layer after 3 taps */
 #define  TAPPING_TOGGLE 3
 
-/* Disables debouncing */
+/* Reduces debouncing */
 #undef   DEBOUNCE
-#define  DEBOUNCE 0
+#define  DEBOUNCE 10
 
 /* Only enable used RGB animations */
 #undef   RGBLIGHT_ANIMATIONS
